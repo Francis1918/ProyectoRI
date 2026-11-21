@@ -1,0 +1,5 @@
+datasets==4.4.1
+sentence-transformers==5.1.2
+faiss-cpu==1.13.0
+fastapi==0.121.2
+uvicorn==0.38.0
