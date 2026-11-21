@@ -1,0 +1,17 @@
+# Dependencias de PRODUCCIÓN de la web (Vercel). El CLI y la evaluación de la parte 1 siguen
+# usando requirements.txt (PyTorch, sentence-transformers, datasets), que NO se despliega
+# (.vercelignore lo excluye): torch por sí solo supera el límite de 500 MB de una función Python.
+[project]
+name = "lente-fiqa"
+version = "2.0.0"
+description = "Lente: buscador web de FiQA sobre Jaccard, TF-IDF, BM25 y embeddings"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.121.2",
+    "faiss-cpu==1.13.0",
+    "numpy==2.5.5",
+    "onnxruntime==1.32.0",
+]
+
+[tool.vercel]
+entrypoint = "app:app"

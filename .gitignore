@@ -1,3 +1,11 @@
 .venv/
 __pycache__/
 data/
+# Artefactos de la web (≈ 205 MB: índice FAISS, modelo ONNX, corpus comprimido): se regeneran con
+# `python build_artifacts.py` y se suben con la CLI de Vercel; en git solo va el manifiesto.
+artifacts/*
+!artifacts/manifest.json
+.vercel/
+
+.vercel
+.env*

@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "created": "2026-11-21T20:18:44+00:00",
+  "model": {
+    "id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "dimension": 384,
+    "runtime": "onnxruntime (grafo onnx/model.onnx de la misma revisión)"
+  },
+  "corpus": {
+    "name": "BeIR/fiqa",
+    "documents": 57638,
+    "test_queries": 648,
+    "k": 10
+  },
+  "faiss": "documents-180307632d0fddb4c323fc6c21b3c4f827698655859928628aaf3ec187ce2b63.faiss",
+  "files": [
+    {
+      "path": "docs.bin",
+      "bytes": 25235891,
+      "sha256": "d03028305a98dcc16cb8d98c4fbe808e125f32d5f21a36fe62fdf0f4f32ded15"
+    },
+    {
+      "path": "docs.offsets.npy",
+      "bytes": 461240,
+      "sha256": "1d4a10bffbc700d3fdc39c4302f4ae6ab6cea2d6940961830568f6738d3292a4"
+    },
+    {
+      "path": "documents-180307632d0fddb4c323fc6c21b3c4f827698655859928628aaf3ec187ce2b63.faiss",
+      "bytes": 88532013,
+      "sha256": "d8e6ae77709a338f68d7f29c942057f8b0d13daf745295da668f737eb7fb6be0"
+    },
+    {
+      "path": "judgments.json",
+      "bytes": 76533,
+      "sha256": "1a955f62c7f1b9c78a13f63282d4542edb4bbc1572f08a233dd6f3c7f4eec9c5"
+    },
+    {
+      "path": "lexical.npz",
+      "bytes": 9141479,
+      "sha256": "cb5ff0477350540aff96697ba727ba7d7e736934804f005ea1558b8830cf4002"
+    },
+    {
+      "path": "model/model.onnx",
+      "bytes": 90405214,
+      "sha256": "6fd5d72fe4589f189f8ebc006442dbb529bb7ce38f8082112682524616046452"
+    },
+    {
+      "path": "model/vocab.txt",
+      "bytes": 231508,
+      "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    },
+    {
+      "path": "report_k10.json",
+      "bytes": 575004,
+      "sha256": "12d4f9ee368d57ebf75264dc3416847399f6634754b919eab9efebeeb80fc3de"
+    }
+  ]
+}

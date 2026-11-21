@@ -1,0 +1,14 @@
+# Lista blanca: se sube SOLO lo que necesita la web. Lo demás (data/, .venv/, requirements.txt con torch,
+# la maqueta img.png, herramientas de desarrollo) no viaja a Vercel.
+/*
+!app.py
+!lente_engine.py
+!onnx_encoder.py
+!retrieval.py
+!corpus.py
+!pyproject.toml
+!uv.lock
+!.python-version
+!vercel.json
+!public
+!artifacts
