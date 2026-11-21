@@ -1,7 +1,8 @@
 """API de Lente (FastAPI). Local: `uvicorn app:app --port 8000`; en Vercel es la función Python.
 
     GET /api/health                       estado, tiempos de arranque, memoria, instancia
-    GET /api/search?q=&method=&n=         top-n de un método (jaccard | tfidf | bm25 | semantic)
+    GET /api/search?q=&method=&n=         top-n de un método (jaccard | tfidf | bm25 | semantic);
+                                          con 0 resultados léxicos añade `suggestion` (o null)
     GET /api/compare?q=&n=                los cuatro métodos para la misma consulta (posiciones)
     GET /api/evaluation                   valores reales de report_k10.json (k=10, 648 consultas)
 

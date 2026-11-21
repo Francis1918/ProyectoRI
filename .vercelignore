@@ -5,6 +5,7 @@
 !lente_engine.py
 !onnx_encoder.py
 !retrieval.py
+!spelling.py
 !corpus.py
 !pyproject.toml
 !uv.lock

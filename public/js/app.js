@@ -269,7 +269,15 @@ function renderError(error, retry) {
   $('h1', main)?.focus({ preventScroll: true });
 }
 
-function renderEmpty(q, method) {
+// Corrección ortográfica opcional que envía el servidor solo cuando un método léxico no encuentra nada.
+// La consulta original se queda como está; la corregida solo se ejecuta si la persona pulsa el enlace.
+function didYouMean(q, method, suggestion) {
+  const fix = typeof suggestion?.query === 'string' ? suggestion.query.trim() : '';
+  if (method === 'semantic' || !fix || fix === q) return '';
+  return `<a class="btn" id="did-you-mean" href="${hashFor('/buscar', { q: fix, m: method, n: state.n })}">¿Quisiste decir <strong>${esc(fix)}</strong>?</a>`;
+}
+
+function renderEmpty(q, method, suggestion) {
   const lexical = method !== 'semantic';
   main.removeAttribute('aria-busy');
   return `
@@ -284,6 +292,7 @@ function renderEmpty(q, method) {
         <li>FiQA está en inglés; las consultas en inglés funcionan mejor.</li>
       </ul>
       <div class="actions">
+        ${didYouMean(q, method, suggestion)}
         ${lexical ? `<a class="btn" href="${hashFor('/buscar', { q, m: 'semantic', n: state.n })}">Buscar con Semántico</a>` : ''}
         <a class="btn ghost" href="${hashFor('/comparar', { q, n: state.n })}">Comparar los cuatro métodos</a>
       </div>
@@ -353,7 +362,7 @@ async function showSearch(q, compare, controller, focusHeading) {
     if (focusHeading) heading?.focus({ preventScroll: true });
     announce(compare
       ? `${data.distinct} documentos distintos en los cuatro métodos, ${data.in_all_methods} en todos.`
-      : `${data.count} resultado${data.count === 1 ? '' : 's'} con ${data.label} en ${Math.round(data.took_ms)} milisegundos.`);
+      : `${data.count} resultado${data.count === 1 ? '' : 's'} con ${data.label} en ${Math.round(data.took_ms)} milisegundos.${!data.count && $('#did-you-mean') ? ` ¿Quisiste decir ${data.suggestion.query}?` : ''}`);
   } catch (error) {
     done();
     if (error.name === 'AbortError' && controller.signal.reason !== 'timeout') return;   // sustituida por otra búsqueda
@@ -370,7 +379,7 @@ function renderSingle(data) {
     <p class="view-sub">${data.count} con ${data.label} (${BY_ID[data.method].family.toLowerCase()}), calculados en ${Math.round(data.took_ms)} ms. Las puntuaciones solo se pueden comparar dentro del mismo método; para contrastar métodos, usa las posiciones.</p>
     ${toolbar(false, q)}
     ${judgedNote(data.judged)}
-    ${data.count ? `<ol class="hits" role="list">${data.hits.map((hit) => hitRow(hit, data.method)).join('')}</ol>` : renderEmpty(data.query, data.method)}`;
+    ${data.count ? `<ol class="hits" role="list">${data.hits.map((hit) => hitRow(hit, data.method)).join('')}</ol>` : renderEmpty(data.query, data.method, data.suggestion)}`;
   bindToolbar(false, q);
   bindDocButtons();
 }

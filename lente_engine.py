@@ -18,7 +18,8 @@ import zlib
 import numpy as np
 
 from onnx_encoder import OnnxEncoder
-from retrieval import METHODS, InvertedIndex, SemanticIndex
+from retrieval import LEXICAL, METHODS, InvertedIndex, SemanticIndex
+from spelling import Speller
 
 ARTIFACTS = Path(os.environ.get("LENTE_ARTIFACTS", Path(__file__).parent / "artifacts"))
 LABELS = {"jaccard": "Jaccard", "tfidf": "TF-IDF", "bm25": "BM25", "semantic": "Semántico"}
@@ -75,6 +76,10 @@ class Engine:
         self.lexical = InvertedIndex.from_arrays(arrays)
         self.ids = self.lexical.postings.ids
         self.position = {identifier: index for index, identifier in enumerate(self.ids)}
+        # Sugerencia ortográfica (solo para «Sin resultados» léxico): reutiliza el vocabulario y los
+        # documentos por término del propio índice; no copia nada y el diccionario se arma al usarla.
+        postings = self.lexical.postings
+        self.speller = Speller(postings.term_index, np.diff(postings.offsets))
         mark("indice_lexico")
 
         offsets = np.load(self.directory / "docs.offsets.npy")
@@ -141,8 +146,11 @@ class Engine:
             if judged:
                 item["relevant"] = identifier in judged[1]
             results.append(item)
+        # Solo con cero resultados léxicos; el ranking y el método semántico no pasan por aquí.
+        suggestion = self.speller.suggest(query) if not hits and method in LEXICAL else None
         return {"query": query, "method": method, "label": LABELS[method], "n": n,
-                "took_ms": took, "count": len(results), **self._judged_info(judged), "hits": results}
+                "took_ms": took, "count": len(results), **self._judged_info(judged), "hits": results,
+                "suggestion": suggestion}
 
     def compare(self, query, n):
         judged = self.judgment(query)
