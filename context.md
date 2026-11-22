@@ -260,3 +260,9 @@ Mantener la web (`public/`) en Vercel y alojar solo la API en un contenedor: `ap
   - `python scripts/check_deployment.py https://lente-fiqa.vercel.app` → **OK**: mismas posiciones que el motor local en los 4 métodos y en comparar (|Δscore| ≤ 6·10⁻⁸) y MAP idéntico a `report_k10.json` (0.0298 / 0.1159 / 0.1726 / 0.2914).
 - **URL verificada:** <https://lente-fiqa.vercel.app> (producción, pública).
 - **No comprobado:** el arranque en frío tras esta publicación no se volvió a medir (las cifras de §10 son de despliegues anteriores); modo oscuro y 390 px se probaron en local y en el Preview, no en producción; el corrector por separado solo existe en local (no hay endpoint). Ningún bloqueo de acceso ni de permisos.
+
+### Corrección de apilamiento (`z-index`) en la vista principal (`home`)
+
+- **Archivo modificado:** `public/css/lente.css`
+- **Problema:** En la vista inicial (`body[data-view="home"]`), el menú desplegable de selección de modelo (`.method-list`) quedaba visualmente por debajo del texto de créditos de la imagen de fondo (`.foot-credit` dentro de `.foot`). Esto ocurría porque el contenedor padre `body[data-view="home"] .top` tenía `z-index: 5`, mientras que `body[data-view="home"] .foot` tenía `z-index: 6`, creando un contexto de apilamiento inferior al pie de página.
+- **Solución:** Se elevó el contexto de apilamiento de la cabecera en la vista de inicio cambiando `z-index: 5` a `z-index: 30` en `body[data-view="home"] .top` (manteniendo `.method-list` en `z-index: 50` y `.foot` en una capa inferior), garantizando que el desplegable se superponga correctamente sobre el pie de página.
