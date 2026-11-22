@@ -112,7 +112,12 @@ button { cursor: pointer; }
 body[data-view="home"] .scene { opacity: 1; }
 
 /* ---------- Cabecera: portada y resultados comparten el mismo formulario ---------- */
-.top { view-transition-name: lente-top; }
+.top { 
+  view-transition-name: lente-top; 
+  position: relative;
+  z-index: 30;
+
+}
 .brand {
   font-family: var(--font-display); font-weight: 300; font-optical-sizing: auto;
   text-decoration: none; color: inherit; line-height: 1; letter-spacing: -.01em;
@@ -125,7 +130,7 @@ body[data-view="home"] .scene { opacity: 1; }
 .top-nav a[aria-current="page"] { text-decoration-thickness: 2px; font-weight: 600; }
 
 body[data-view="home"] .top {
-  position: fixed; inset: 0; z-index: 5; color: #fff;
+  position: fixed; inset: 0; z-index: 30; color: #fff;
   display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto;
   align-content: center; justify-items: center;
   row-gap: clamp(1.25rem, 3.5vw, 2.25rem); padding: 0 var(--gutter) 9dvh;
@@ -185,10 +190,11 @@ body[data-view="home"] .method-button { font-size: 1.15rem; }
 .method-button svg { transition: transform .18s ease; }
 .method-button[aria-expanded="true"] svg { transform: rotate(180deg); }
 .method-list {
-  position: absolute; top: calc(100% + .5rem); right: 0; z-index: 30; min-width: 17rem;
+  position: absolute; top: calc(100% + .5rem); right: 0; z-index: 50; min-width: 17rem;
   margin: 0; padding: .4rem; list-style: none; border-radius: 16px;
   background: var(--surface-2); color: var(--text); border: 1px solid var(--line);
   box-shadow: 0 18px 50px rgb(8 9 30 / .28);
+  
 }
 body[data-view="home"] .method-list {
   background: rgb(22 24 56 / .9); color: #fff; border-color: rgb(255 255 255 / .2);
@@ -217,6 +223,7 @@ body:not([data-view="home"]) .bar-msg { color: var(--ember); flex-basis: 100%; m
 .foot {
   margin-top: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .35rem 2rem;
   padding: 1rem var(--gutter) max(1rem, env(safe-area-inset-bottom)); font-size: .82rem; color: var(--muted);
+  z-index: 10;
 }
 .foot-credit { max-width: 62ch; }
 body[data-view="home"] .foot { position: fixed; inset: auto 0 0 0; z-index: 6; color: rgb(255 255 255 / .86); }
