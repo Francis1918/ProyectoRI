@@ -73,7 +73,7 @@ def check_lexical(live, restored, queries):
             if live.search(query, method, LEXICAL_CHECK_TOP) != restored.search(query, method, LEXICAL_CHECK_TOP):
                 raise AssertionError(f"Índice léxico distinto en {method}: {query!r}")
 
-
+#se arma el paquete que vercel se lleva, emqueta el copus los indices el modelo onnx y reporte para la WEB
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path("data/fiqa"))
