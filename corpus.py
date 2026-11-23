@@ -83,7 +83,7 @@ def prepare(directory, sample_queries=None, distractors=100):
     print(f"FiQA validado: {len(documents)} documentos, {len(queries)} consultas totales, "
           f"{len(relevant)} consultas de test y {len(judgments)} qrels compatibles.")
 
-    if sample_queries is not None:
+    if sample_queries is not None: #preparar una muestra pequenya solo en casos test, en esta usos todo el corpus
         rng = random.Random(42)
         chosen = set(rng.sample(sorted(relevant), min(sample_queries, len(relevant))))
         judgments = [row for row in judgments if row["query-id"] in chosen]
@@ -92,10 +92,10 @@ def prepare(directory, sample_queries=None, distractors=100):
         retained = required | set(rng.sample(pool, min(distractors, len(pool))))
         documents = {key: documents[key] for key in sorted(retained)}
 
-    query_ids = {row["query-id"] for row in judgments}
-    write_jsonl(directory / "corpus.jsonl", documents.values())
-    write_jsonl(directory / "queries.jsonl", (queries[key] for key in sorted(query_ids)))
-    write_jsonl(directory / "qrels.jsonl", judgments)
+    query_ids = {row["query-id"] for row in judgments}#cosultas que tienen jucios de relevancia, no todas las consultas del dataset tienen qrels
+    write_jsonl(directory / "corpus.jsonl", documents.values())# guardamos el corpus completo, que es lo que se va a indexar
+    write_jsonl(directory / "queries.jsonl", (queries[key] for key in sorted(query_ids)))#juicios de relevandcias
+    write_jsonl(directory / "qrels.jsonl", judgments) #guardamos estos 3 archvios cuales osn relevantes
     print(f"{directory}: {len(documents)} documentos, {len(query_ids)} consultas, "
           f"{len(judgments)} qrels.")
 
