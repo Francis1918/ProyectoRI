@@ -117,9 +117,9 @@ def clean(query):
         raise HTTPException(422, {"code": "invalid_request", "message": "Escribe una consulta."})
     return query
 
-
-@app.get("/api/health")
-def health(response: Response):
+#devule el estado del motor en lo que tarde cargar
+@app.get("/api/health") # comprueba el estado del motor cuantos documentos cargo y cuanto tardara en arracar
+def health(response: Response):#responde y tarde en cargar el motor y si esta listo o no
     response.headers["Cache-Control"] = "no-store"
     engine = _state["engine"]
     body = {"ready": engine is not None, "error": _state["error"],
