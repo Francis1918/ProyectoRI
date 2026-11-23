@@ -23,6 +23,7 @@ def metrics(hits, relevant, k):
 
 
 def evaluate(directory, documents, k):
+    #ejecuta las consulta las cosultas de manera lcoal con los cuatro metodos y devuelve un informe con los resultados de cada metodo y las metricas de precision, recall y ap
     queries, relevant = load_evaluation(directory, documents)
     query_ids = sorted(relevant)
     texts = [queries[key]["text"] for key in query_ids]
@@ -30,7 +31,7 @@ def evaluate(directory, documents, k):
     semantic = SemanticIndex(documents, directory)
     report = {"k": k, "documents": len(documents), "query_count": len(texts), "methods": {}}
     for method in METHODS:
-        if method == "semantic":
+        if method == "semantic":#from retrivel py los 4 metodos de busqueda recorre los 4
             rankings = semantic.search_many(texts, k)
         else:
             rankings = (lexical.search(query, method, k) for query in texts)
