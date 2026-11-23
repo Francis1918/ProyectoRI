@@ -327,7 +327,7 @@ function judgedNote(judged) {
   if (!judged) return '';
   return `<p class="note-judged">Esta consulta está en el conjunto de prueba de FiQA (id ${esc(judged.query_id)}): tiene ${judged.relevant_total} documento${judged.relevant_total === 1 ? '' : 's'} relevante${judged.relevant_total === 1 ? '' : 's'} según los juicios de relevancia (qrels) y se marcan como <span class="badge">Relevante</span>.</p>`;
 }
-
+//convierte cada resultado en al api en una tarjeta visible para el user
 function hitRow(hit, method) {
   state.docs.set(hit.id, hit);
   return `
@@ -346,15 +346,15 @@ function hitRow(hit, method) {
       <div class="hit-score">${score4.format(hit.score)}<small><span aria-hidden="true">puntuación</span><span class="visually-hidden">puntuación propia de ${BY_ID[method].label}</span></small></div>
     </li>`;
 }
-
+//usa para pausar hasta que reponda la API y luego renderiza los resultados de la busqueda
 async function showSearch(q, compare, controller, focusHeading) {
   const done = renderLoading(compare ? 'Comparando los cuatro métodos…' : `Buscando con ${BY_ID[state.method].label}…`);
   const timeout = setTimeout(() => controller.abort('timeout'), REQUEST_TIMEOUT_MS);
   const retry = () => route({ focusHeading: false });
   try {
     const params = compare ? { q, n: state.n } : { q, method: state.method, n: state.n };
-    const data = await api(compare ? '/api/compare' : '/api/search', params, controller.signal);
-    done();
+    const data = await api(compare ? '/api/compare' : '/api/search', params, controller.signal); // si es verdadero
+    done();//llama a al api de busca o comparacion y guarda la respuesta en data
     if (controller.signal.aborted) return;
     compare ? renderCompare(data) : renderSingle(data);
     document.title = `${q} · ${compare ? 'Comparación' : data.label} · Lente`;
@@ -371,7 +371,7 @@ async function showSearch(q, compare, controller, focusHeading) {
     clearTimeout(timeout);
   }
 }
-
+//musetra lso resultdoas del metodo que eleji en la pantalla
 function renderSingle(data) {
   const { q } = state;
   main.innerHTML = `
@@ -396,7 +396,7 @@ function rankChips(doc, current) {
     return `<li class="${cls}" title="${esc(text)}"><span class="visually-hidden">${esc(text)}</span><span aria-hidden="true">${m.short}<b>${rank ?? '–'}</b></span></li>`;
   }).join('')}</ul>`;
 }
-
+//arma las 4 metodos en columas para compararlos
 function renderCompare(data) {
   const { q } = state;
   for (const [id, doc] of Object.entries(data.documents)) state.docs.set(id, { ...doc, id });
@@ -518,7 +518,7 @@ async function showEvaluation(controller, focusHeading) {
     renderError(error, () => route({ focusHeading: false }));
   }
 }
-
+//toma las metricas que llegaron las metricas que llegaron de la api y la smuestra en la pestanya de evaluacion
 function renderEvaluation(ev) {
   const maxMap = Math.max(...ev.methods.map((m) => m.map));
   const rows = ev.methods.map((m) => `
