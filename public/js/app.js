@@ -276,7 +276,8 @@ function didYouMean(q, method, suggestion) {
   if (method === 'semantic' || !fix || fix === q) return '';
   return `<a class="btn" id="did-you-mean" href="${hashFor('/buscar', { q: fix, m: method, n: state.n })}">¿Quisiste decir <strong>${esc(fix)}</strong>?</a>`;
 }
-
+//muestra cuano no hay resultados y ofreces una correcion si la api devuelve una
+//ofrece una correccion si esta disponible
 function renderEmpty(q, method, suggestion) {
   const lexical = method !== 'semantic';
   main.removeAttribute('aria-busy');
@@ -355,7 +356,8 @@ async function showSearch(q, compare, controller, focusHeading) {
     const params = compare ? { q, n: state.n } : { q, method: state.method, n: state.n };
     const data = await api(compare ? '/api/compare' : '/api/search', params, controller.signal); // si es verdadero
     done();//llama a al api de busca o comparacion y guarda la respuesta en data
-    if (controller.signal.aborted) return;
+    if (controller.signal.aborted) return;//si hago una busqueda si la otra sigue pendiente cancela la anterios para que no se mezle los otros
+    //canelada por otra busqueda
     compare ? renderCompare(data) : renderSingle(data);
     document.title = `${q} · ${compare ? 'Comparación' : data.label} · Lente`;
     const heading = $('h1', main);
@@ -502,7 +504,7 @@ dialog.addEventListener('close', () => { lastTrigger?.focus?.(); lastTrigger = n
 
 const evalUi = { metric: 2, sort: { key: 'id', dir: 1 }, filter: '', page: 0, size: 20 };
 const METRICS = [['Precision@10', 0], ['Recall@10', 1], ['AP@10', 2]];
-
+//entrega las metricas de las pruebas de fiqua presion recall  @10
 async function showEvaluation(controller, focusHeading) {
   const done = renderLoading('Cargando la evaluación…');
   try {
