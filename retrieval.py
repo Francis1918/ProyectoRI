@@ -60,15 +60,15 @@ class InvertedIndex:
         self.norms = {key: math.sqrt(value) for key, value in squared_norm.items()}
 
     def search(self, query, method, limit):
-        terms = Counter(tokenize(query))
-        scores = Counter()
+        terms = Counter(tokenize(query)) #convertimos la consulta en palabras y puntuamos cada domuento con el metodo elegido
+        scores = Counter() #y devolvemos los ID con mayor puntaje
         if method == "jaccard":
-            for term in terms:
+            for term in terms: #palabras en comun con las palabras distintas
                 scores.update(self.postings.get(term, {}).keys())
             for key, overlap in scores.items():
                 scores[key] = overlap / (len(terms) + self.unique_terms[key] - overlap)
         elif method == "tfidf":
-            query_weights = {term: tf * self.tfidf_idf[term]
+            query_weights = {term: tf * self.tfidf_idf[term] #palabras freq en el doc y no comun el corpus
                              for term, tf in terms.items() if term in self.tfidf_idf}
             query_norm = math.sqrt(sum(weight ** 2 for weight in query_weights.values()))
             for term, weight in query_weights.items():
@@ -77,7 +77,7 @@ class InvertedIndex:
             for key in scores:
                 scores[key] /= query_norm * self.norms[key]
         elif method == "bm25":
-            k1, b = 1.2, 0.75
+            k1, b = 1.2, 0.75 #palabras raras modera cuntas suma repeirlas y lo ajsutas po rla longitud del docuemtno
             for term in terms:
                 for key, tf in self.postings.get(term, {}).items():
                     length_factor = 1 - b + b * self.lengths[key] / self.mean_length
@@ -85,7 +85,7 @@ class InvertedIndex:
         else:
             raise ValueError(f"Método léxico desconocido: {method}")
         return nsmallest(limit, scores.items(), key=lambda hit: (-hit[1], hit[0]))
-
+# devuelve hasta un limite de pares con el ilmite de puntaje de mayor a menor si empatan se orden por ID
     # --- Parte 2: serialización compacta para el despliegue serverless -------------------------
     # La puntuación sigue siendo `search` (arriba): solo cambia dónde viven los postings. Se
     # guardan como arrays (CSR) y cada lista de postings se materializa al consultar el término.
@@ -158,6 +158,7 @@ class CompactPostings:
 
 def faiss_path(documents, directory):
     """Ruta del índice FAISS de este corpus y modelo: el nombre lleva el hash del contenido."""
+    #ruta del archivo que esta guardado enel disk usa el nombre modelo y el directorio corupus
     digest = hashlib.sha256(f"v1:{MODEL}:{MODEL_REVISION}".encode())
     for identifier in sorted(documents):
         for field in (identifier, document_text(documents[identifier])):
@@ -165,6 +166,7 @@ def faiss_path(documents, directory):
             digest.update(len(data).to_bytes(8, "big"))
             digest.update(data)
     return directory / f"documents-{digest.hexdigest()}.faiss"
+# esa funcion devuleve la ruta
 
 
 class SemanticIndex:
@@ -181,12 +183,12 @@ class SemanticIndex:
         dimension = self.model.get_sentence_embedding_dimension()
         path = faiss_path(documents, directory)
         if path.exists():
-            self.index = faiss.read_index(str(path))
+            self.index = faiss.read_index(str(path)) #llama esta ruta para leer el archivo que esta guardado en el disk
             if (self.index.ntotal != len(self.ids) or self.index.d != dimension
-                    or self.index.metric_type != faiss.METRIC_INNER_PRODUCT):
+                    or self.index.metric_type != faiss.METRIC_INNER_PRODUCT): # lo carga y lo guarda en memoria
                 raise ValueError(f"Índice FAISS incompatible: {path}")
             print(f"Índice FAISS reutilizado: {path}", file=sys.stderr)
-            return
+            return #lo usamos para buscar los vectroes mas parecidos en la consulta
 
         self.index = faiss.IndexFlatIP(dimension)
         for offset in range(0, len(self.ids), 256):
@@ -228,11 +230,14 @@ class SemanticIndex:
 
     def search_many(self, queries, limit):
         # Buscar todos permite aplicar el mismo desempate también en el límite del top-n.
+        # La búsqueda de un solo query es más rápida, pero el desempate se hace por query.
         for offset in range(0, len(queries), 32):
-            vectors = self.encode(queries[offset:offset + 32])
-            scores, positions = self.index.search(vectors, len(self.ids))
+            vectors = self.encode(queries[offset:offset + 32]) # convvierte la consulta en un vector
+            scores, positions = self.index.search(vectors, len(self.ids))# faiss usa el vector para encotrar los doc mas cercanos
             for row_scores, row_positions in zip(scores, positions, strict=True):
                 hits = ((self.ids[position], float(score))
                         for score, position in zip(row_scores, row_positions, strict=True))
                 yield nsmallest(limit, hits, key=lambda hit: (-hit[1], hit[0]))
+# para convertir la consulta en un vct buscamos los vct mas cercanos
+#la consuta se convierte en un VCT y este mismo los buscamos en los vectores de los docuemento y ver cual son los mas parecidos
 
