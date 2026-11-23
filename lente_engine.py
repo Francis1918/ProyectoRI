@@ -130,21 +130,20 @@ class Engine:
     # --- búsqueda --------------------------------------------------------------------------
 
     def _rank(self, query, method, n):
-        started = time.perf_counter()
+        started = time.perf_counter() #ejecuta la busqueda con el metodo seleccionado y devuelven id con puntaje tiempo en milisegundos
         if method == "semantic":
-            hits = next(self.semantic.search_many([query], n))
-        else:
-            hits = self.lexical.search(query, method, n)
-        return hits, round((time.perf_counter() - started) * 1000, 1)
-
+            hits = next(self.semantic.search_many([query], n)) #semantico
+        else: #tiempoo a milissegundos y lo redunodea a uno
+            hits = self.lexical.search(query, method, n) #lexico jsccard tfidf bm25
+        return hits, round((time.perf_counter() - started) * 1000, 1) #devuelve los id y puntaje y el tiempo que tardo esa busqueda
     def search(self, query, method, n):
-        hits, took = self._rank(query, method, n)
+        hits, took = self._rank(query, method, n) #id puntaje y tiemo en ms
         judged = self.judgment(query)
-        results = []
-        for rank, (identifier, score) in enumerate(hits, start=1):
+        results = [] #arma la respuesta con los resultados ordenados y su relevancia si hay juicios de fiqa
+        for rank, (identifier, score) in enumerate(hits, start=1): #resultado en la pantalla
             item = {"rank": rank, "score": score, **self.document(identifier)}
             if judged:
-                item["relevant"] = identifier in judged[1]
+                item["relevant"] = identifier in judged[1] #lo marca relevante segun la referencia
             results.append(item)
         # Solo con cero resultados léxicos; el ranking y el método semántico no pasan por aquí.
         suggestion = self.speller.suggest(query) if not hits and method in LEXICAL else None
@@ -153,7 +152,7 @@ class Engine:
                 "suggestion": suggestion}
 
     def compare(self, query, n):
-        judged = self.judgment(query)
+        judged = self.judgment(query) #ejecutar la consulta con los cuatrosmtoedso diferentes  para mostrar su puntaje juntos
         methods, ranks, order = [], {}, []
         for method in METHODS:
             hits, took = self._rank(query, method, n)
@@ -190,11 +189,11 @@ class Engine:
         return self._evaluation
 
     def _build_evaluation(self):
-        report = self.report
+        report = self.report #se toma metricas ya sean calculoas de report k10 y comprueba que el reporte este completo y que cuaadre
         count = report["query_count"]
-        by_method, table = [], {}
+        by_method, table = [], {}#verifica el reporte de evaluacion y prepara las metricas que muestra la web
         for method in METHODS:
-            rows = report["methods"][method]["queries"]
+            rows = report["methods"][method]["queries"] #es un comparador de moteodos
             if len(rows) != count:
                 raise ValueError(f"report_k10.json incompleto para {method}")
             mean_ap = sum(row["ap"] for row in rows) / count
