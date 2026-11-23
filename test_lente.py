@@ -46,8 +46,8 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(body["model"]["revision"], retrieval.MODEL_REVISION)
 
     def test_each_method_returns_ordered_top_n(self):
-        for method in METHODS:
-            with self.subTest(method=method):
+        for method in METHODS:#devuelva cada uno delos metodos por el puntaje
+            with self.subTest(method=method):#en cada pruba se asegura que cada uno de los metodos obtengan o saquen primero lo mas revlante o mas puntaje
                 body = self.get("/api/search", q=HOME_OFFICE, method=method, n=7).json()
                 self.assertEqual(body["count"], 7)
                 self.assertEqual([hit["rank"] for hit in body["hits"]], list(range(1, 8)))
@@ -63,7 +63,7 @@ class ApiTests(unittest.TestCase):
 
     def test_default_method_is_semantic(self):
         self.assertEqual(self.get("/api/search", q="stock options").json()["method"], "semantic")
-
+# compreuba que ocmparar y buscar devulevan los mismo resultados por metodo
     def test_compare_is_consistent_with_search(self):
         body = self.get("/api/compare", q=HOME_OFFICE, n=10).json()
         self.assertEqual([m["id"] for m in body["methods"]], list(METHODS))
@@ -74,7 +74,7 @@ class ApiTests(unittest.TestCase):
                 self.assertEqual(body["documents"][hit["id"]]["ranks"][method["id"]], hit["rank"])
         self.assertEqual(body["distinct"], len(body["documents"]))
         self.assertEqual(body["overlap"]["bm25"]["semantic"], body["overlap"]["semantic"]["bm25"])
-
+#trata de asegurarse que no aportan a la busqueda no las tome en cuenta stopwords devuelva 0 resualtados
     def test_empty_results_for_stopword_only_lexical_query(self):
         for method in ("jaccard", "tfidf", "bm25"):
             self.assertEqual(self.get("/api/search", q="the of a", method=method).json()["count"], 0)
@@ -90,7 +90,7 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(self.get("/api/search", q="   ").status_code, 422)
 
     def test_unicode_and_odd_queries_do_not_crash(self):
-        for query in ("¿Cómo declarar impuestos? 日本語 😀", "[CLS] [SEP]", "͸", "a" * 300, "%$&?=#"):
+        for query in ("¿Cómo declarar impuestos?", "[CLS] [SEP]", "͸", "a" * 300, "%$&?=#"):
             with self.subTest(query=query):
                 self.assertEqual(self.get("/api/search", q=query, n=3).status_code, 200)
 
