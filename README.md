@@ -156,6 +156,23 @@ npx vercel@latest deploy --prod             # sube código + artifacts/ y constr
 
 Con una cuenta y un proyecto nuevos hay que crear antes el proyecto (`vercel project create`) y aceptar el aviso de que no hay Git. Los `git push` **no** redespliegan la web, porque los artefactos no están en el repositorio.
 
+## Arquitectura
+
+Flujo de una búsqueda, desde que se escribe la consulta hasta que se muestran los resultados:
+
+![Diagrama de flujo de la arquitectura de Lente](img_1.png)
+
+1. **Consulta:** el usuario la escribe en `public/index.html`.
+2. **Envío:** `public/js/app.js` manda texto, método y cantidad de resultados.
+3. **API:** FastAPI (`app.py`) recibe `GET /api/search`.
+4. **Ranking:** `_rank` (`lente_engine.py`) usa el método elegido:
+   - **Jaccard, TF-IDF o BM25:** búsqueda por palabras en `retrieval.py`.
+   - **Semántico:** `onnx_encoder.py` genera el vector de la consulta y `retrieval.py` busca con FAISS.
+5. **Respuesta:** el motor arma el resultado y `app.py` lo devuelve como JSON.
+6. **Presentación:** el navegador lo muestra. «Leer completo» abre el documento.
+
+Si un método léxico no da resultados y hay sugerencia ortográfica (`spelling.py`), la interfaz la ofrece. Al aceptarla se cambia el texto, se conservan método y cantidad, y la búsqueda se repite desde el paso 2.
+
 ## Estructura del proyecto
 
 ```mermaid

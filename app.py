@@ -136,7 +136,7 @@ def health(response: Response):#responde y tarde en cargar el motor y si esta li
 
 @app.get("/api/search")
 def search(response: Response, q: Text, method: Method = "semantic", n: Top = 10): #recibe el texot que escribir
-    response.headers["Cache-Control"] = "no-store"
+    response.headers["Cache-Control"] = "no-store"#SI NO Bada us semanticoUSCO NA
     INSTANCE["requests"] += 1 #el metodo que eligi
     INSTANCE["searches"] += 1 # y cuantos resultados que quoier ver
     return get_engine().search(clean(q), method, n)
