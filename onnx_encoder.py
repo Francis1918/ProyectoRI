@@ -146,6 +146,8 @@ class OnnxEncoder:
         return np.concatenate(batches)
 
     def _encode_batch(self, texts):
+        #mini LM convierte el texto de la consutla en un vct
+        #codfica texto en VCT con mini LM para la busqueda semantica, primero tokeniza el texto y luego lo pasa por el modelo onnx y devuelve un vector normalizado
         encoded = [self.tokenizer.encode(text) for text in texts]
         width = max(len(ids) for ids in encoded)
         input_ids = np.zeros((len(encoded), width), dtype=np.int64)
