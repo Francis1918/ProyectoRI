@@ -63,7 +63,9 @@ async function api(path, params, signal) {
   }
   return body;
 }
-
+// Aborta cualquier petición pendiente y devuelve un nuevo AbortController.
+//canela la peticion anterior
+//antes de iniciarotra busqueda
 function abortInflight() {
   inflight?.abort();
   inflight = new AbortController();
