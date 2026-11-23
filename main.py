@@ -45,14 +45,15 @@ def evaluate(directory, documents, k):
             "queries": rows,
         }
     return report
-
+#valida que que el argumento sea un valor entero mayor a cero , el numero de resultados tiene que se asi
 
 def positive(value):
     number = int(value)
     if number < 1:
         raise argparse.ArgumentTypeError("se requiere un entero positivo")
     return number
-
+#lee que comando escribi en la teminal y ejecuta que pedi
+#lee el comando den la cli y ejecuta la opcion elegida
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
