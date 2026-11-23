@@ -158,6 +158,85 @@ Con una cuenta y un proyecto nuevos hay que crear antes el proyecto (`vercel pro
 
 ## Estructura del proyecto
 
+```mermaid
+graph TD
+    Root["📦 ProyectoRI/"]
+
+    Root --> Backend["⚙️ Backend & Motor RI"]
+    Root --> Frontend["🎨 Frontend (public/)"]
+    Root --> Artifacts["📊 Artifacts (artifacts/)"]
+    Root --> Scripts["🛠️ Scripts (scripts/)"]
+    Root --> Testing["🧪 Testing"]
+    Root --> Docs["📄 Docs & Config"]
+
+    subgraph Backend_Files [" "]
+        direction TB
+        B1["app.py"]
+        B2["main.py"]
+        B3["lente_engine.py"]
+        B4["retrieval.py"]
+        B5["corpus.py"]
+        B6["onnx_encoder.py"]
+        B7["spelling.py"]
+        B8["build_artifacts.py"]
+    end
+    Backend --- Backend_Files
+
+    subgraph Frontend_Files [" "]
+        direction TB
+        F1["index.html"]
+        F2["css/lente.css"]
+        F3["js/app.js"]
+        F4["fonts/ (fraunces, hanken-grotesk)"]
+        F5["img/ (fondo-1600, fondo-2560, fondo-movil)"]
+        F6["favicon.svg"]
+    end
+    Frontend --- Frontend_Files
+
+    subgraph Artifacts_Files [" "]
+        direction TB
+        A1["manifest.json"]
+    end
+    Artifacts --- Artifacts_Files
+
+    subgraph Scripts_Files [" "]
+        direction TB
+        S1["check_deployment.py"]
+        S2["health_summary.py"]
+        S3["idle_probe.sh"]
+        S4["prepare_background.py"]
+    end
+    Scripts --- Scripts_Files
+
+    subgraph Testing_Files [" "]
+        direction TB
+        T1["test_lente.py"]
+        T2["verify_encoder.py"]
+        T3["verify_engine.py"]
+    end
+    Testing --- Testing_Files
+
+    subgraph Docs_Files [" "]
+        direction TB
+        D1["README.md / CREDITS.md"]
+        D2["context.md / proy01.md"]
+        D3["Informe Técnico - BravoJimenezPuga (.docx/.pdf)"]
+        D4["Lente - Presentacion (1).html"]
+        D5["pyproject.toml / requirements.txt / uv.lock"]
+        D6["vercel.json / .vercelignore"]
+    end
+    Docs --- Docs_Files
+
+    classDef rootStyle fill:#1e293b,stroke:#0f172a,color:#ffffff,font-weight:bold;
+    classDef catStyle fill:#0d9488,stroke:#0f766e,color:#ffffff,font-weight:bold;
+    classDef subStyle fill:#f8fafc,stroke:#cbd5e1,color:#1e293b;
+
+    class Root rootStyle;
+    class Backend,Frontend,Artifacts,Scripts,Testing,Docs catStyle;
+    class Backend_Files,Frontend_Files,Artifacts_Files,Scripts_Files,Testing_Files,Docs_Files subStyle;
+```
+
+
 | Archivo | Función |
 |---|---|
 | `corpus.py` | Descarga y valida FiQA; exporta JSON Lines en `data/fiqa/`. |
