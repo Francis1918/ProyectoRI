@@ -135,12 +135,13 @@ def health(response: Response):
 
 
 @app.get("/api/search")
-def search(response: Response, q: Text, method: Method = "semantic", n: Top = 10):
+def search(response: Response, q: Text, method: Method = "semantic", n: Top = 10): #recibe el texot que escribir
     response.headers["Cache-Control"] = "no-store"
-    INSTANCE["requests"] += 1
-    INSTANCE["searches"] += 1
+    INSTANCE["requests"] += 1 #el metodo que eligi
+    INSTANCE["searches"] += 1 # y cuantos resultados que quoier ver
     return get_engine().search(clean(q), method, n)
-
+# app.py pasa esos datos al motor que hace la busqueda y devuelve los resultados
+# esta ruta pasa la consulta al motor y devuelve los resultados en json
 
 @app.get("/api/compare")
 def compare(response: Response, q: Text, n: Top = 10):
@@ -150,11 +151,11 @@ def compare(response: Response, q: Text, n: Top = 10):
     return get_engine().compare(clean(q), n)
 
 
-@app.get("/api/evaluation")
+@app.get("/api/evaluation") # ahi es donde la web recibe las metricas de precisioin recall  y map@10
 def evaluation(response: Response):
     response.headers["Cache-Control"] = "public, max-age=300, s-maxage=86400"
     INSTANCE["requests"] += 1
-    return get_engine().evaluation()
+    return get_engine().evaluation() #entrega las metricas del reporte de evaluacion  del def compare y metricas precalculadas
 
 
 if not os.environ.get("VERCEL"):
