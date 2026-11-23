@@ -83,7 +83,7 @@ def _distances(word, columns):
 
 class Speller:
     """Sugiere una única consulta corregida a partir del vocabulario y la frecuencia por documento."""
-
+# carga un diccionario y sugiere correcciones otortograficos simples
     def __init__(self, terms, frequencies):
         """`terms` y `frequencies` van en el mismo orden (el del índice léxico)."""
         self._terms, self._frequencies = terms, frequencies
