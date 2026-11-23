@@ -177,14 +177,14 @@ Si un método léxico no da resultados y hay sugerencia ortográfica (`spelling.
 
 ```mermaid
 graph TD
-    Root["📦 ProyectoRI/"]
+    Root[" ProyectoRI/"]
 
-    Root --> Backend["⚙️ Backend & Motor RI"]
-    Root --> Frontend["🎨 Frontend (public/)"]
-    Root --> Artifacts["📊 Artifacts (artifacts/)"]
-    Root --> Scripts["🛠️ Scripts (scripts/)"]
-    Root --> Testing["🧪 Testing"]
-    Root --> Docs["📄 Docs & Config"]
+    Root --> Backend[" Backend & Motor RI"]
+    Root --> Frontend[" Frontend (public/)"]
+    Root --> Artifacts[" Artifacts (artifacts/)"]
+    Root --> Scripts[" Scripts (scripts/)"]
+    Root --> Testing[" Testing"]
+    Root --> Docs[" Docs & Config"]
 
     subgraph Backend_Files [" "]
         direction TB
